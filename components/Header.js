@@ -15,6 +15,7 @@ export default function Header() {
   const [mobileServices, setMobileServices] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const navRef = useRef(null);
+  const headerRef = useRef(null);
   const closeTimer = useRef(null);
 
   useEffect(() => {
@@ -31,13 +32,41 @@ export default function Header() {
     setMobileServices(false);
   }, [pathname]);
 
-  // lock page scroll behind the mobile menu
+  // Lock page scroll behind the mobile menu.
+  // Lock on <html>, not <body>: html has overflow-x: clip, so overflow on body would not
+  // propagate to the viewport. The body would become its own scroll container and the
+  // sticky header would scroll away (menu "breaks" when opened after scrolling down).
   useEffect(() => {
-    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    const root = document.documentElement;
+    root.style.overflow = mobileOpen ? "hidden" : "";
     return () => {
-      document.body.style.overflow = "";
+      root.style.overflow = "";
     };
   }, [mobileOpen]);
+
+  // size the mobile panel to the space actually below the header (topbar may be scrolled away)
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const fit = () => {
+      const h = headerRef.current;
+      if (!h) return;
+      const bottom = Math.max(0, h.getBoundingClientRect().bottom);
+      h.style.setProperty("--mnav-max", `${Math.max(200, window.innerHeight - bottom)}px`);
+    };
+    fit();
+    window.addEventListener("resize", fit);
+    return () => window.removeEventListener("resize", fit);
+  }, [mobileOpen]);
+
+  // leave mobile mode cleanly if the viewport grows past the breakpoint
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1021px)");
+    const onChange = (e) => {
+      if (e.matches) setMobileOpen(false);
+    };
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   // escape key + click outside for the desktop dropdown
   useEffect(() => {
@@ -87,7 +116,7 @@ export default function Header() {
         </div>
       </div>
 
-      <header className={`site-header${scrolled ? " scrolled" : ""}`}>
+      <header ref={headerRef} className={`site-header${scrolled ? " scrolled" : ""}`}>
         <div className="container header-inner">
           <Link href="/" className="brand" aria-label={`${site.name} home`}>
             <Logo />
@@ -185,14 +214,14 @@ export default function Header() {
                         onClick={() => setMobileServices((v) => !v)}
                         tabIndex={mobileOpen ? 0 : -1}
                       >
-                        <Icon name="chevron" size={22} />
+                        <Icon name="chevron" size={18} />
                       </button>
                     </div>
                     <ul className={`m-sub${mobileServices ? " open" : ""}`}>
                       {services.map((s) => (
                         <li key={s.slug}>
                           <Link href={`/services/${s.slug}`} tabIndex={mobileOpen && mobileServices ? 0 : -1}>
-                            <Icon name={s.icon} size={18} />
+                            <Icon name={s.icon} size={16} />
                             {s.title}
                           </Link>
                         </li>

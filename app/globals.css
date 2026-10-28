@@ -632,8 +632,10 @@ p {
     top: 100%;
     left: 0;
     right: 0;
-    max-height: calc(100dvh - 104px);
+    max-height: var(--mnav-max, calc(100dvh - 66px));
     overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
     padding: 8px 24px 28px;
     background: var(--white);
     border-bottom: 1px solid var(--line);
@@ -658,19 +660,19 @@ p {
   }
   .m-row a {
     flex: 1;
-    padding: 16px 0;
+    padding: 12px 0;
     font-family: var(--font-head);
     font-weight: 700;
-    font-size: 1.3rem;
-    letter-spacing: -0.02em;
+    font-size: 1.05rem;
+    letter-spacing: -0.015em;
     text-decoration: none;
   }
   .m-row a.active {
     color: var(--orange-t);
   }
   .m-row button {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     display: grid;
     place-items: center;
     border: 0;
@@ -693,21 +695,23 @@ p {
   .m-sub a {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 11px 0;
+    gap: 10px;
+    padding: 9px 0;
     text-decoration: none;
     font-weight: 600;
+    font-size: 0.9rem;
   }
   .m-sub svg {
     color: var(--orange-t);
   }
   .mobile-nav .btn {
-    margin-top: 22px;
+    margin-top: 18px;
+    font-size: 0.95rem;
   }
   .m-contact {
-    margin-top: 16px;
+    margin-top: 14px;
     text-align: center;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
   }
 }
 
