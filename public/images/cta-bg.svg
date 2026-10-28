@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 760" preserveAspectRatio="xMidYMid slice">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0d0f16"/><stop offset=".55" stop-color="#171a24"/><stop offset="1" stop-color="#241610"/></linearGradient>
+<radialGradient id="g1" cx=".82" cy=".25" r=".55"><stop offset="0" stop-color="#fd6d1e" stop-opacity=".55"/><stop offset="1" stop-color="#fd6d1e" stop-opacity="0"/></radialGradient>
+<radialGradient id="g2" cx=".08" cy=".95" r=".45"><stop offset="0" stop-color="#ff8a4f" stop-opacity=".3"/><stop offset="1" stop-color="#ff8a4f" stop-opacity="0"/></radialGradient>
+<linearGradient id="bar" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#fd6d1e" stop-opacity="0"/><stop offset="1" stop-color="#fd6d1e" stop-opacity=".45"/></linearGradient>
+<pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse"><path d="M64 0H0V64" fill="none" stroke="#fff" stroke-opacity=".05"/></pattern>
+</defs>
+<rect width="1920" height="760" fill="url(#bg)"/><rect width="1920" height="760" fill="url(#grid)"/>
+<rect width="1920" height="760" fill="url(#g1)"/><rect width="1920" height="760" fill="url(#g2)"/>
+<g>
+<rect x="1180" y="560" width="70" height="200" rx="8" fill="url(#bar)"/>
+<rect x="1270" y="500" width="70" height="260" rx="8" fill="url(#bar)"/>
+<rect x="1360" y="430" width="70" height="330" rx="8" fill="url(#bar)"/>
+<rect x="1450" y="350" width="70" height="410" rx="8" fill="url(#bar)"/>
+<rect x="1540" y="270" width="70" height="490" rx="8" fill="url(#bar)"/>
+<rect x="1630" y="170" width="70" height="590" rx="8" fill="url(#bar)"/>
+<rect x="1720" y="90" width="70" height="670" rx="8" fill="url(#bar)"/>
+</g>
+<path d="M1150 600 C1300 560 1380 470 1480 400 S1660 220 1830 70" fill="none" stroke="#ff8a4f" stroke-width="5" stroke-linecap="round" stroke-opacity=".9"/>
+<circle cx="1830" cy="70" r="14" fill="#fff"/><circle cx="1830" cy="70" r="30" fill="none" stroke="#ff8a4f" stroke-opacity=".6" stroke-width="3"/>
+<circle cx="260" cy="120" r="170" fill="none" stroke="#fff" stroke-opacity=".06" stroke-width="2"/><circle cx="260" cy="120" r="250" fill="none" stroke="#fff" stroke-opacity=".04" stroke-width="2"/>
+</svg>
