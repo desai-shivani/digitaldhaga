@@ -12,7 +12,9 @@ export default function Footer() {
       <div className="footer-art" aria-hidden="true" />
       <div className="container footer-grid">
         <div className="footer-brand">
-          <Logo light />
+          <Link href="/" className="brand" aria-label={`${site.name} home`}>
+            <Logo />
+          </Link>
           <p>{site.description}</p>
           <ul className="social" aria-label="Social media">
             {site.social.map((s) => (

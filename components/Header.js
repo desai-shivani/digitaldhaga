@@ -15,7 +15,6 @@ export default function Header() {
   const [mobileServices, setMobileServices] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const navRef = useRef(null);
-  const headerRef = useRef(null);
   const closeTimer = useRef(null);
 
   useEffect(() => {
@@ -32,10 +31,9 @@ export default function Header() {
     setMobileServices(false);
   }, [pathname]);
 
-  // Lock page scroll behind the mobile menu.
-  // Lock on <html>, not <body>: html has overflow-x: clip, so overflow on body would not
-  // propagate to the viewport. The body would become its own scroll container and the
-  // sticky header would scroll away (menu "breaks" when opened after scrolling down).
+  // lock page scroll behind the mobile menu.
+  // Lock <html>, not <body>: the body has overflow-x: clip, so overflow: hidden on it would turn it into
+  // its own scroll container and the sticky header would scroll away with the page.
   useEffect(() => {
     const root = document.documentElement;
     root.style.overflow = mobileOpen ? "hidden" : "";
@@ -43,30 +41,6 @@ export default function Header() {
       root.style.overflow = "";
     };
   }, [mobileOpen]);
-
-  // size the mobile panel to the space actually below the header (topbar may be scrolled away)
-  useEffect(() => {
-    if (!mobileOpen) return;
-    const fit = () => {
-      const h = headerRef.current;
-      if (!h) return;
-      const bottom = Math.max(0, h.getBoundingClientRect().bottom);
-      h.style.setProperty("--mnav-max", `${Math.max(200, window.innerHeight - bottom)}px`);
-    };
-    fit();
-    window.addEventListener("resize", fit);
-    return () => window.removeEventListener("resize", fit);
-  }, [mobileOpen]);
-
-  // leave mobile mode cleanly if the viewport grows past the breakpoint
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 1021px)");
-    const onChange = (e) => {
-      if (e.matches) setMobileOpen(false);
-    };
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
 
   // escape key + click outside for the desktop dropdown
   useEffect(() => {
@@ -102,7 +76,17 @@ export default function Header() {
   };
   const closeMenuSoon = () => {
     clearTimeout(closeTimer.current);
-    closeTimer.current = setTimeout(() => setMenuOpen(false), 140);
+    closeTimer.current = setTimeout(() => setMenuOpen(false), 260);
+  };
+  // Clicking a link to the page you are already on does not navigate, so close the menus
+  // ourselves and scroll back to the top so the click visibly does something.
+  const goTo = (href) => (e) => {
+    setMenuOpen(false);
+    setMobileOpen(false);
+    if (pathname === href) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   return (
@@ -116,9 +100,9 @@ export default function Header() {
         </div>
       </div>
 
-      <header ref={headerRef} className={`site-header${scrolled ? " scrolled" : ""}`}>
+      <header className={`site-header${scrolled ? " scrolled" : ""}`}>
         <div className="container header-inner">
-          <Link href="/" className="brand" aria-label={`${site.name} home`}>
+          <Link href="/" className="brand" aria-label={`${site.name} home`} onClick={goTo("/")}>
             <Logo />
           </Link>
 
@@ -149,7 +133,7 @@ export default function Header() {
                     <div id="services-menu" className="mega" role="menu" hidden={!menuOpen}>
                       <div className="mega-grid">
                         {services.map((s) => (
-                          <Link key={s.slug} href={`/services/${s.slug}`} className="mega-item" role="menuitem">
+                          <Link key={s.slug} href={`/services/${s.slug}`} className="mega-item" role="menuitem" onClick={goTo(`/services/${s.slug}`)}>
                             <span className="mega-icon">
                               <Icon name={s.icon} size={20} />
                             </span>
@@ -162,7 +146,7 @@ export default function Header() {
                       </div>
                       <div className="mega-foot">
                         <span>Not sure what you need? We will help you pick.</span>
-                        <Link href="/services" className="link-arrow">
+                        <Link href="/services" className="link-arrow" onClick={goTo("/services")}>
                           View all services <Icon name="arrow" size={16} />
                         </Link>
                       </div>
@@ -197,7 +181,22 @@ export default function Header() {
           </button>
         </div>
 
-        <div id="mobile-nav" className={`mobile-nav${mobileOpen ? " open" : ""}`} aria-hidden={!mobileOpen}>
+        <div
+          id="mobile-nav"
+          className={`mobile-nav${mobileOpen ? " open" : ""}`}
+          aria-hidden={!mobileOpen}
+          // close the menu when any link is tapped (also when it points to the page you are already on)
+          onClick={(e) => {
+            const a = e.target.closest("a");
+            if (!a) return;
+            setMobileOpen(false);
+            // tapping the page you are already on: scroll to the top instead of doing nothing
+            if (a.getAttribute("href") === pathname) {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+          }}
+        >
           <nav aria-label="Mobile">
             <ul>
               {nav.map((item) =>
@@ -214,18 +213,23 @@ export default function Header() {
                         onClick={() => setMobileServices((v) => !v)}
                         tabIndex={mobileOpen ? 0 : -1}
                       >
-                        <Icon name="chevron" size={18} />
+                        <Icon name="chevron" size={22} />
                       </button>
                     </div>
                     <ul className={`m-sub${mobileServices ? " open" : ""}`}>
                       {services.map((s) => (
                         <li key={s.slug}>
                           <Link href={`/services/${s.slug}`} tabIndex={mobileOpen && mobileServices ? 0 : -1}>
-                            <Icon name={s.icon} size={16} />
+                            <Icon name={s.icon} size={18} />
                             {s.title}
                           </Link>
                         </li>
                       ))}
+                      <li>
+                        <Link href="/services" className="m-all" tabIndex={mobileOpen && mobileServices ? 0 : -1} onClick={goTo("/services")}>
+                          View all services <Icon name="arrow" size={16} />
+                        </Link>
+                      </li>
                     </ul>
                   </li>
                 ) : (

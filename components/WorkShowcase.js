@@ -3,12 +3,14 @@
 import { useState } from "react";
 import PortfolioCarousel from "./PortfolioCarousel";
 import { SocialPost, LogoTile } from "./WorkArt";
-import { socialPosts, logoWork } from "@/lib/data";
+import BrochureViewer from "./BrochureViewer";
+import { socialPosts, logoWork, brochures } from "@/lib/data";
 
 const tabs = [
   { id: "websites", label: "Websites We Built", count: "Websites" },
   { id: "social", label: "Social Media Posts", count: "Posts" },
   { id: "logos", label: "Logos & Branding", count: "Logos" },
+  { id: "brochures", label: "Brochures", count: "Brochures" },
 ];
 
 export default function WorkShowcase({ projects }) {
@@ -58,6 +60,7 @@ export default function WorkShowcase({ projects }) {
             </button>
           </div>
         )}
+        {tab === "brochures" && brochures.map((b) => <BrochureViewer key={b.slug} b={b} />)}
         {tab === "logos" && (
           <ul className="logo-grid-work">
             {logoWork.map((l) => (

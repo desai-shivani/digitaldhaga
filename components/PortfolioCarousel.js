@@ -5,7 +5,9 @@ import Icon from "./Icon";
 import { ProjectCard } from "./PortfolioGrid";
 
 // Scroll-snap carousel: swipe on touch, arrows + dots on desktop.
-export default function PortfolioCarousel({ projects }) {
+export default function PortfolioCarousel({ projects, items, renderItem, label = "Recent projects", slideClass = "" }) {
+  const list = items ?? projects;
+  const render = renderItem ?? ((p) => <ProjectCard p={p} />);
   const track = useRef(null);
   const [index, setIndex] = useState(0);
   // arrows and dots only appear when there are more cards than fit on screen
@@ -53,23 +55,23 @@ export default function PortfolioCarousel({ projects }) {
   };
 
   return (
-    <div className={`carousel${scrollable ? "" : " no-scroll"}`} role="region" aria-roledescription="carousel" aria-label="Recent projects">
-      <button type="button" className="btn btn-sm carousel-nav prev" onClick={() => goTo(index - 1)} disabled={index === 0} aria-label="Previous project">
+    <div className={`carousel${scrollable ? "" : " no-scroll"}`} role="region" aria-roledescription="carousel" aria-label={label}>
+      <button type="button" className="btn btn-sm carousel-nav prev" onClick={() => goTo(index - 1)} disabled={index === 0} aria-label="Previous">
         <Icon name="arrow" size={20} />
       </button>
       <ul className="carousel-track" ref={track} tabIndex={0}>
-        {projects.map((p, i) => (
-          <li key={p.slug} className="carousel-slide" aria-roledescription="slide" aria-label={`${i + 1} of ${projects.length}`}>
-            <ProjectCard p={p} />
+        {list.map((p, i) => (
+          <li key={p.slug ?? i} className={`carousel-slide ${slideClass}`} aria-roledescription="slide" aria-label={`${i + 1} of ${list.length}`}>
+            {render(p, i)}
           </li>
         ))}
       </ul>
-      <button type="button" className="btn btn-sm carousel-nav next" onClick={() => goTo(index + 1)} disabled={index >= projects.length - 1} aria-label="Next project">
+      <button type="button" className="btn btn-sm carousel-nav next" onClick={() => goTo(index + 1)} disabled={index >= list.length - 1} aria-label="Next">
         <Icon name="arrow" size={20} />
       </button>
       <div className="carousel-dots">
-        {projects.map((p, i) => (
-          <button key={p.slug} type="button" className={i === index ? "on" : ""} aria-label={`Go to ${p.title}`} aria-current={i === index} onClick={() => goTo(i)} />
+        {list.map((p, i) => (
+          <button key={p.slug ?? i} type="button" className={i === index ? "on" : ""} aria-label={`Go to slide ${i + 1}`} aria-current={i === index} onClick={() => goTo(i)} />
         ))}
       </div>
     </div>
